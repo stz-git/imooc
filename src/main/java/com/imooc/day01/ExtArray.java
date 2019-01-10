@@ -11,13 +11,28 @@ import java.util.List;
  * <p>
  * 容量：capacity
  * 有效元素：size
+ * <p>
+ * 增删：O(n); 如果只对最后一个元素进行增删,时间复杂度还是O(n)?因为resize()?
+ * 查改：如果已知索引,时间复杂度是O(1); 如果是未知索引,需要遍历,时间复杂度是O(n)
+ * <p>
+ * 如何分析addLast的时间复杂度？(均摊时间复杂度)
+ * 假设capacity是n,n+1次addLast,触发resize,总共2n+1次基本操作
+ * 约等于一次addLast,做了2次基本操作
+ * 平均下来addLast的时间复杂度是O(1)级别的，与数组中元素个数是没有关系的
+ * <p>
+ * 模拟情景：数组已满，先进行addLast，需要进行一次扩容，时间复杂度是O(n)；紧接着进行removeLast，需要进行一次缩容，时间复杂度还是O(n)
+ * 已经不满足均摊复杂度期望的n+1操作次进行一次扩容或者缩容，而是反复的扩缩
+ * 这就是时间复杂度的震荡
+ * 出现问题的原因：removeLast是resize的过于着急，扩容后我又变成了满的，至少让我在缩容后还有富余的时候再缩容吧
+ * 解决方案：Lazy
+ * 当size=capacity/4时，才将capacity减半
  */
-public class ExtArray {
-    private int[] data;
+public class ExtArray<E> {
+    private E[] data;
     private int size;
 
     public ExtArray(int capacity) {
-        data = new int[capacity];
+        data = (E[]) new Object[capacity];
         size = 0;
     }
 
@@ -39,22 +54,29 @@ public class ExtArray {
     }
 
     //在数组的末尾添加元素
-    public void addLast(int e) {
+    //O(1)
+    public void addLast(E e) {
         add(size, e);
     }
 
     //在数组的头添加元素
-    public void addFirst(int e) {
+    //O(n)
+    public void addFirst(E e) {
         add(0, e);
     }
 
     //在数组的指定位置上添加元素
-    public void add(int index, int e) {
-        if (size == data.length)
-            throw new IllegalArgumentException("AddLast failed. Array is full.");
-        //0<=index<=size(size=index时，在数组末尾添加元素)
+    //O(n)
+    public void add(int index, E e) {
+
         if (index < 0 || index > size)
             throw new IllegalArgumentException("AddLast failed. Require index >= 0 and index < size.");
+
+        //扩容
+        if (size == data.length) {
+            resize(2 * data.length);
+        }
+
         //index之后的数据往后推
         for (int i = size; i > index; i--) {
             data[i] = data[i - 1];
@@ -63,41 +85,56 @@ public class ExtArray {
         size++;
     }
 
-    public int get(int index) {
+    //O(n)
+    public void resize(int newCapacity) {
+        E[] newData = (E[]) new Object[newCapacity];
+        //转移原data中的元素
+        for (int i = 0; i < size; i++) {
+            newData[i] = data[i];
+        }
+        data = newData;
+        newData = null;
+    }
+
+    //O(1)
+    public E get(int index) {
         if (index < 0 || index >= size)
             throw new IllegalArgumentException("Get failed. Index is illegal.");
         return data[index];
     }
 
+    //O(1):支持随机方法
     //更新数组指定位置上的元素
-    public void set(int index, int e) {
+    public void set(int index, E e) {
         if (index < 0 || index >= size)
             throw new IllegalArgumentException("Get failed. Index is illegal.");
         data[index] = e;
     }
 
-    public boolean contains(int e) {
+    //O(n)
+    public boolean contains(E e) {
         for (int i = 0; i < size; i++) {
-            if (data[i] == e) {
+            if (data[i].equals(e)) {//值比较
                 return true;
             }
         }
         return false;
     }
 
-    public int find(int e) {
+    //O(n)
+    public int find(E e) {
         for (int i = 0; i < size; i++) {
-            if (data[i] == e) {
+            if (data[i].equals(e)) {
                 return i;
             }
         }
         return -1;
     }
 
-    public List<Integer> findAll(int e) {
+    public List<Integer> findAll(E e) {
         List<Integer> indexList = new ArrayList<Integer>();
         for (int i = 0; i < size; i++) {
-            if (data[i] == e) {
+            if (data[i].equals(e)) {
                 indexList.add(i);
             }
         }
@@ -108,29 +145,36 @@ public class ExtArray {
     }
 
     //删除元素
-    public int remove(int index) {
+    //O(n)
+    public E remove(int index) {
         if (index < 0 || index >= size) {
             throw new IllegalArgumentException("Remove failed. Index is illegal.");
         }
-        int ret = data[index];
-        //因为要大量的转移数组中的其他元素，也证明了ArrayList的增删效率慢的原因
+        E ret = data[index];
         for (int i = index; i < size - 1; i++) {
             data[i] = data[i + 1];
         }
         size--;
+        data[size] = null;
+
+        if (size == data.length / 4 && data.length / 2 != 0) {
+            resize(data.length / 2);
+        }
         return ret;
     }
 
-    public int removeFirst() {
+    //O(n)
+    public E removeFirst() {
         return remove(0);
     }
 
-    public int removeLast() {
+    //O(1)
+    public E removeLast() {
         return remove(size - 1);
     }
 
     //如果数组中存在元素e，只删除第一个
-    public int removeElement(int e) {
+    public int removeElement(E e) {
         int index = find(e);
         if (index != -1) {
             remove(index);
@@ -139,13 +183,13 @@ public class ExtArray {
     }
 
     //如果数组中存在元素e，只删除第一个
-    public boolean removeAllElement(int e) {
+    public boolean removeAllElement(E e) {
         //不能一次查出该元素所有的位置，如果一次查出所有的index再遍历删除时，上一次删除都有可能导致剩余待删除元素索引的改变
-        List<Integer> indexList = new ArrayList<Integer>();
+        List<E> indexList = new ArrayList<E>();
         for (int i = 0; i < size; i++) {
-            if (data[i] == e) {
-                int index = remove(i);
-                indexList.add(index);
+            if (data[i].equals(e)) {
+                E res = remove(i);
+                indexList.add(res);
                 i--;//删掉这个索引上的元素，后面的元素会补上来，要对这个索引上的元素重新判断
             }
         }
@@ -161,7 +205,7 @@ public class ExtArray {
         res.append(String.format("Array: size = %d , capacity = %d\n", size, data.length));
         res.append("[");
         for (int i = 0; i < size; i++) {
-            res.append(data[i]);
+            res.append(data[i].toString());
             if (i != size - 1) {
                 res.append(", ");
             }
@@ -171,21 +215,18 @@ public class ExtArray {
     }
 
     public static void main(String[] args) {
-        ExtArray extArray = new ExtArray();
+        ExtArray<Integer> extArray = new ExtArray<Integer>(10);
         extArray.addLast(66);
         extArray.addLast(88);
         extArray.addLast(99);
         extArray.addLast(99);
-        /*for (int i = 0; i < extArray.getSize(); i++) {
-            System.out.println(extArray.get(i));
-        }*/
+        extArray.addLast(199);
         extArray.add(0, -1);
+
         System.out.println(extArray.toString());
-//        System.out.println(extArray.get(2));
-        List<Integer> indexList = extArray.findAll(99);
-        System.out.println("indexList:"+indexList.toString());
-        boolean flag = extArray.removeAllElement(99);
-        System.out.println(flag);
+
+        extArray.remove(2);
+
         System.out.println(extArray.toString());
     }
 }
