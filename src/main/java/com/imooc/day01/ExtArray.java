@@ -70,7 +70,7 @@ public class ExtArray<E> {
     public void add(int index, E e) {
 
         if (index < 0 || index > size)
-            throw new IllegalArgumentException("AddLast failed. Require index >= 0 and index < size.");
+            throw new IllegalArgumentException("AddLast failed. Require index >= 0 and index <= size.");
 
         //扩容
         if (size == data.length) {
