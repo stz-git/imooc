@@ -18,7 +18,7 @@ public class Student {
     }
 
     public static void main(String[] args) {
-        ExtArray<Student> studentExtArray = new ExtArray<Student>();
+        HomeWorkArray<Student> studentExtArray = new HomeWorkArray<Student>();
         studentExtArray.addLast(new Student("kobe",100));
         studentExtArray.addLast(new Student("curry",80));
         studentExtArray.addLast(new Student("james",90));

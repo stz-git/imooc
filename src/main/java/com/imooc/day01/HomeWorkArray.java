@@ -74,6 +74,17 @@ public class HomeWorkArray<E> {
         return ret;
     }
 
+    public E removeLast(){
+        E remove = remove(size - 1);
+        return remove;
+    }
+
+    public E removeFirst(){
+        E remove = remove(0);
+        return remove;
+    }
+
+
     public void set(int index, E e) {
         if (index < 0 || index >= size) {
             throw new IllegalArgumentException("Add failed. Require index >= 0 and index <= size.");
@@ -86,6 +97,14 @@ public class HomeWorkArray<E> {
             throw new IllegalArgumentException("Add failed. Require index >= 0 and index <= size.");
         }
         return data[index];
+    }
+
+    public E getLast(){
+        return get(size - 1);
+    }
+
+    public E getFirst(){
+        return get(0);
     }
 
     @Override

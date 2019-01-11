@@ -1,6 +1,6 @@
 package com.imooc.day02;
 
-import com.imooc.day01.ExtArray;
+import com.imooc.day01.HomeWorkArray;
 
 /**
  * 基于动态数组实现栈
@@ -11,14 +11,14 @@ import com.imooc.day01.ExtArray;
  */
 public class ArrayStack<E> implements ExtStack<E> {
 
-    private ExtArray<E> extArray;
+    private HomeWorkArray<E> extArray;
 
     public ArrayStack(int capacity) {
-        extArray = new ExtArray<E>(capacity);
+        extArray = new HomeWorkArray<E>(capacity);
     }
 
     public ArrayStack() {
-        extArray = new ExtArray<E>();
+        extArray = new HomeWorkArray<E>();
     }
 
     //O(1)
