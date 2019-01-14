@@ -9,7 +9,7 @@ import com.imooc.day01_Array.HomeWorkArray;
  * 用户只能看见栈顶的元素是什么
  * @param <E>
  */
-public class ArrayStack<E> implements ExtStack<E> {
+public class ArrayStack<E> implements Stack<E> {
 
     private HomeWorkArray<E> extArray;
 
@@ -26,7 +26,7 @@ public class ArrayStack<E> implements ExtStack<E> {
         extArray.addLast(e);
     }
 
-    //O(1)
+    //O(n)
     public E pop() {
         return extArray.removeLast();
     }

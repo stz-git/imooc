@@ -5,7 +5,7 @@ package com.imooc.day03_LinkedList;
  * 1.ArrayList是基于动态数组实现，LinedList是基于链表实现
  * 2.对于随机访问的get和set，ArrayList要优于LinedList，因为ArrayList有索引可以直接定位，而LinedList需要移动指针
  * 3.对于add和remove，LinkedList要优于ArrayList
- * 因为LinkedList增删如果只对链表头进行操作，时间复杂度是O(1)级别，并且相对于ArrayList来说不需要维护容量
+ * 因为LinkedList增删如果，所以只需要维护(Node.next=head)，时间复杂度是O(1)级别
  * 而ArrayList除了addLast(E e)，还有add(int index,E e)，后者需要移动数据，时间复杂度是O(n)级别
  *
  * 增删改查的时间复杂度全部是O(n)
@@ -69,8 +69,7 @@ public class LinkedList<E> {
     public void add(int index, E e) {
         if (index < 0 || index > size)
             throw new IllegalArgumentException("Add failed. Illegal index.");
-        /*if (index == 0)//因为链表头没有前一个结点，所以特殊处理
-            addFirst(e);*/
+
         Node prev = dummyhead;
         for (int i = 0; i < index; i++)
             prev = prev.next;
@@ -93,7 +92,7 @@ public class LinkedList<E> {
         }
         return cur.e;
     }
-
+    //O(1)
     public E getFirst() {
         return get(0);
     }

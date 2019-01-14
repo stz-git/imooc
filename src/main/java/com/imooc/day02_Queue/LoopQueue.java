@@ -27,6 +27,7 @@ public class LoopQueue<E> implements Queue<E> {
     public boolean isEmpty() {
         return front == tail;
     }
+
     //入队：维护队尾tail的位置
     public void enqueue(E e) {
         //1.判断队列是否已满

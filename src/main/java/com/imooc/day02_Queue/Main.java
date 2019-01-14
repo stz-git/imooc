@@ -20,12 +20,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int opCount = 1000000;
+        int opCount = 100000;
 
         double time1 = testQueue(new ArrayQueue<Integer>(), opCount);
         System.out.println("ArrayQueue time: " + time1 + "s");
 
         double time2 = testQueue(new LoopQueue<Integer>(), opCount);
         System.out.println("LoopQueue time: " + time2 + "s");
+
+        double time3 = testQueue(new LinkedListQueue<Integer>(), opCount);
+        System.out.println("LinkedListQueue time: " + time3 + "s");
     }
 }

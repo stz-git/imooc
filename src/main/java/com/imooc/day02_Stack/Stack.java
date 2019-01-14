@@ -1,6 +1,6 @@
 package com.imooc.day02_Stack;
 
-public interface ExtStack<E> {
+public interface Stack<E> {
     void push(E e);
     E pop();
     E peek();
