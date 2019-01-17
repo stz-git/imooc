@@ -1,4 +1,4 @@
-package com.imooc.day01;
+package com.imooc.day01_Array;
 
 public class HomeWorkArray<E> {
     private E[] data;
