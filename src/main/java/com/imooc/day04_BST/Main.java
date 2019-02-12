@@ -15,6 +15,9 @@ public class Main {
 //        bst.inOrder();
 //        bst.postOrder();
 //        bst.preOrderNR();
-        bst.levelOrder();
+//        bst.levelOrder();
+        Integer ret = bst.removeMin();
+        System.out.println(ret);
+        System.out.println(bst);
     }
 }
